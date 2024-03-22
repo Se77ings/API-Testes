@@ -1,0 +1,169 @@
+<?php ?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualizando Notificações</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        width: 500px;
+        margin: 0 auto;
+      }
+
+      #form {
+        width: 360px;
+        margin: 20px auto;
+      }
+
+      #screen {
+        border: solid 5px black;
+        border-radius: 10px;
+        width: 360px;
+        height: 640px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .selected {
+        background-color: #f0f0f0;
+        border-radius: 5px;
+      }
+
+      #header > p {
+        width: 100%;
+        margin: 0px;
+        padding: 10px;
+        cursor: pointer;
+      }
+      .opt {
+        cursor: pointer;
+        border: solid 1px black;
+        margin: 5px;
+        padding: 5px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="form">
+      <input
+        type="text"
+        id="idUsuario"
+        placeholder="Acesse com algum usuário:"
+      />
+      <button onclick="loadNotificacoes()">Acessar:</button>
+    </div>
+    <div id="screen">
+      <p>Usuário Logado:</p>
+      <div style="height: 600px">
+        <div id="header" style="display: flex; justify-content: space-around">
+          <p class="headerOpt selected">Novas:</p>
+          <p class="headerOpt">Visualizadas</p>
+        </div>
+        <div
+          style="
+            border: solid 1px black;
+            width: 340px;
+            height: 525px;
+            overflow-y: auto;
+          "
+        >
+          <div id="content" style="margin-left: 10px">
+            <div id="novas">
+              <!-- por enquanto sem onclick, href, ou nada -->
+            </div>
+            <div id="visualizadas" style="display: none">
+              <!-- por enquanto sem onclick, href, ou nada -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      opt = document.querySelectorAll(".opt");
+      headerOpt = document.querySelectorAll(".headerOpt");
+      headerOpt.forEach((el) => {
+        el.addEventListener("click", (e) => {
+          headerOpt.forEach((el) => {
+            el.classList.remove("selected");
+          });
+          e.target.classList.add("selected");
+          if (e.target.innerHTML == "Novas:") {
+            document.getElementById("novas").style.display = "block";
+            document.getElementById("visualizadas").style.display = "none";
+          } else {
+            document.getElementById("novas").style.display = "none";
+            document.getElementById("visualizadas").style.display = "block";
+          }
+        });
+      });
+      opt.forEach((el) => {
+        el.addEventListener("click", (e) => {
+          console.log(e.target.innerHTML);
+        });
+      });
+      
+      function loadNotificacoes() {
+        var idUsuario = document.getElementById("idUsuario").value;
+
+        request(
+          `http://192.168.0.215:3000/notificacoes/user/${idUsuario}`,
+          "GET"
+        )
+          .then((response) => {
+            // console.log(response);
+            // Aqui você pode manipular a resposta da requisição
+            response = JSON.parse(response);
+            // console.log(response);
+            response.forEach((element) => {
+              if (element.visualizado == 0) {
+                document.getElementById(
+                  "novas"
+                ).innerHTML += `<p class='opt'>${element.titulo}</p>`;
+              } else {
+                document.getElementById(
+                  "visualizadas"
+                ).innerHTML += `<p class='opt'>${element.titulo}</p>`;
+              }
+              console.log(element);
+            });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+
+      function request(route, method, data = null) {
+        return new Promise((resolve, reject) => {
+          let xhr = new XMLHttpRequest();
+          xhr.open(method, route, true);
+
+          // Configura os cabeçalhos CORS
+          xhr.setRequestHeader("Access-Control-Allow-Origin", "*"); // Define a origem permitida como *
+          xhr.setRequestHeader(
+            "Access-Control-Allow-Methods",
+            "GET, POST, OPTIONS"
+          );
+
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+              if (xhr.status == 200) {
+                resolve(xhr.responseText);
+              } else {
+                reject(xhr.status);
+              }
+            }
+          };
+          xhr.send(JSON.stringify(data));
+        });
+      }
+    </script>
+  </body>
+</html>

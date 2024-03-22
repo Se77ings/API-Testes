@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enviar FormData via JSON</title>
+  </head>
+  <body>
+    <form id="formulario" enctype="multipart/form-data">
+      <label for="observacao">Observação:</label>
+      <input type="text" id="observacao" name="observacao" /><br /><br />
+
+      <label for="idUsuario">ID do Usuário:</label>
+      <input type="text" id="idUsuario" name="idUsuario" /><br /><br />
+
+      <label for="idServico">ID do Serviço:</label>
+      <input type="text" id="idServico" name="idServico" /><br /><br />
+
+      <label for="idUnidade">ID da Unidade:</label>
+      <input type="text" id="idUnidade" name="idUnidade" /><br /><br />
+
+      <label for="imagem">Imagem:</label>
+      <input type="file" id="imagem" name="imagem[]" multiple /><br /><br />
+
+      <button type="button" onclick="enviarDados()">Enviar</button>
+    </form>
+
+    <script>
+      function enviarDados() {
+        var formData = new FormData();
+        formData.append(
+          "observacao",
+          document.getElementById("observacao").value
+        );
+        formData.append(
+          "idUsuario",
+          document.getElementById("idUsuario").value
+        );
+        formData.append(
+          "idServico",
+          document.getElementById("idServico").value
+        );
+        formData.append(
+          "idUnidade",
+          document.getElementById("idUnidade").value
+        );
+        var imagens = document.getElementById("imagem").files;
+
+        
+        for (var i = 0; i < imagens.length; i++) {
+          formData.append("imagem", imagens[i]);
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://192.168.0.215:3000/solicitacoes/imagem");
+        xhr.onload = function () {
+          if (xhr.status === 201) {
+            console.log("Solicitação com imagens cadastrada com sucesso!");
+          } else {
+            console.error("Erro ao cadastrar solicitação:", xhr.responseText);
+          }
+        };
+        xhr.send(formData);
+      }
+    </script>
+  </body>
+</html>

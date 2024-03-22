@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <title>Teste - Notificações:</title>
+    <style>
+      .select-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .options-container {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        z-index: 1;
+        max-height: 550px; /* Defina a altura máxima desejada */
+        overflow-y: auto; /* Habilita a barra de rolagem vertical apenas quando necessário */
+        position: absolute;
+      }
+
+      .option {
+        padding: 8px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .option:hover {
+        background-color: #f0f0f0;
+      }
+      #filtroBairros {
+        display: none;
+      }
+      #listaBairrosSelecionados {
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding-left: 0px;
+      }
+
+      #listaBairrosSelecionados li {
+        margin: 5px;
+        padding: 5px;
+        border: solid 1px black;
+        border-radius: 10px;
+      }
+
+      .option input[type="checkbox"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #555555;
+        background-color: #fff; /* Cor de fundo do checkbox */
+        background-clip: content-box;
+        padding: 3px;
+        vertical-align: middle;
+        margin-right: 8px;
+        border-radius: 50%;
+      }
+
+      /* Estiliza o checkbox desativado quando está marcado */
+      .option input[type="checkbox"]:checked {
+        background-color: #007bff; /* Cor do checkbox quando está marcado */
+      }
+
+      @media screen and (max-width: 500px) {
+        .select-wrapper {
+          position: relative;
+          display: inline-block;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body onload="loadBairros()">
+    <div class="container" style="margin-top: 35px">
+      <h1>Geração de Notificações por bairros</h1>
+      <!-- colocar checkbox nas listas: -->
+      <form action="" class="form-group">
+        <label for="titulo">Título:</label>
+        <input
+          type="text"
+          name="titulo"
+          id="titulo"
+          class="form-control mb-2"
+        />
+
+        <label for="descricao">Descrição:</label>
+        <input
+          type="text"
+          name="descricao"
+          id="descricao"
+          class="form-control mb-2"
+        />
+        <div class="select-wrapper">
+          <label for="">Bairro(s):</label>
+          <div class="selected-option form-select" id="selectedOption">
+            Selecione um bairro
+          </div>
+
+          <input
+            type="text"
+            id="filtroBairros"
+            class="form-control filtro"
+            placeholder="Filtrar bairros"
+          />
+          <div class="options-container" id="optionsContainer"></div>
+        </div>
+      </form>
+      <div id="bairrosSelecionados">
+        <hr />
+        <h3>Bairros selecionados:</h3>
+        <ul id="listaBairrosSelecionados"></ul>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: row; justify-content: center">
+      <button onclick="sendForm()" class="btn btn-success">Enviar Dados</button>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      var bairrosSelecionados = [];
+
+      function sendForm() {
+        var titulo = document.getElementById("titulo").value;
+        var descricao = document.getElementById("descricao").value;
+        var bairros = bairrosSelecionados.map((bairro) => bairro.id);
+        if (titulo == "") {
+          alert("Título não pode ser vazio");
+          return;
+        }
+        if (descricao == "") {
+          alert("Descrição não pode ser vazia");
+          return;
+        }
+        if (bairros.length == 0) {
+          alert("Selecione pelo menos um bairro");
+          return;
+        }
+        console.log(titulo, descricao, bairros);
+        setTimeout(() => {
+          request("../controller/notificacoes.php", "POST", {
+            titulo: titulo,
+            mensagem: descricao,
+            bairros: bairros,
+          })
+            .then((response) => {
+              console.log(response);
+              if (response) {
+                bairrosSelecionados = [];
+                //melhor reload
+                displayBairros();
+                document.getElementById("titulo").value = "";
+                document.getElementById("descricao").value = "";
+                alert("Notificação enviada com sucesso");
+                //then, reload screen
+                window.location.reload();
+              } else {
+                alert("Erro ao enviar a notificação");
+              }
+            })
+            .catch((error) => {
+              console.log("Erro ao enviar os dados: " + error);
+            });
+        }, 2000);
+      }
+      function displayBairros() {
+        var listaBairrosSelecionados = document.getElementById(
+          "listaBairrosSelecionados"
+        );
+        listaBairrosSelecionados.innerHTML = "";
+
+        bairrosSelecionados.forEach((bairro) => {
+          var li = document.createElement("li");
+          li.textContent = bairro.bairro;
+          li.id = bairro.id;
+
+          var lixeira = document.createElement("i");
+          lixeira.classList.add("bi");
+          lixeira.classList.add("bi-trash3-fill");
+          lixeira.style.cursor = "pointer";
+          lixeira.style.marginLeft = "5px";
+
+          lixeira.onclick = () => {
+            bairrosSelecionados = bairrosSelecionados.filter(
+              (b) => b.id !== li.id
+            );
+            displayBairros();
+            console.log(bairrosSelecionados);
+          };
+
+          li.appendChild(lixeira);
+          listaBairrosSelecionados.appendChild(li);
+        });
+      }
+
+      function loadBairros() {
+        var optionsContainer = document.getElementById("optionsContainer");
+        request("../controller/bairros.php", "GET")
+          .then((response) => {
+            optionsContainer.innerHTML = response;
+            automacao();
+          })
+          .catch((error) => {
+            // console.log("Erro ao carregar os bairros: " + error);
+          });
+      }
+
+      function automacao() {
+        selectedOption = document.getElementById("selectedOption");
+        titulo = document.getElementById("titulo");
+        descricao = document.getElementById("descricao");
+
+        Jockey = document.getElementById("103");
+        selectedOption.click();
+        Jockey.click();
+        titulo.value = "Titulo automação";
+        descricao.value = "Descrição automação";
+        document.getElementsByTagName("body")[0].click();
+      }
+
+      function request(route, method, data = null) {
+        return new Promise((resolve, reject) => {
+          let xhr = new XMLHttpRequest();
+          xhr.open(method, route, true);
+
+          // Configura os cabeçalhos CORS
+          xhr.setRequestHeader("Access-Control-Allow-Origin", "*"); // Define a origem permitida como *
+          xhr.setRequestHeader(
+            "Access-Control-Allow-Methods",
+            "GET, POST, OPTIONS"
+          );
+
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+              if (xhr.status == 200) {
+                resolve(xhr.responseText);
+              } else {
+                reject(xhr.status);
+              }
+            }
+          };
+          xhr.send(JSON.stringify(data));
+        });
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        var selectedOption = document.getElementById("selectedOption");
+        var optionsContainer = document.getElementById("optionsContainer");
+        var filtroBairros = document.getElementById("filtroBairros");
+
+        selectedOption.addEventListener("click", function () {
+          optionsContainer.style.display = "block";
+          filtroBairros.style.display = "block";
+          filtroBairros.focus();
+        });
+
+        document.addEventListener("click", function (event) {
+          var target = event.target;
+          // console.log(target);
+          if (
+            target.id !== "selectedOption" &&
+            target.id !== "filtroBairros" &&
+            target.classList.contains("option") === false
+          ) {
+            optionsContainer.style.display = "none";
+            filtroBairros.style.display = "none";
+          }
+        });
+
+        filtroBairros.addEventListener("input", function () {
+          var filtroTexto = filtroBairros.value.toUpperCase();
+          var options = optionsContainer.getElementsByClassName("option");
+          for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            var texto = option.textContent.toUpperCase();
+            if (texto.indexOf(filtroTexto) > -1) {
+              option.style.display = "";
+            } else {
+              option.style.display = "none";
+            }
+          }
+        });
+
+        filtroBairros.addEventListener("click", function (event) {
+          this.select();
+        });
+
+        // Selecionar a opção clicada
+        optionsContainer.addEventListener("click", function (event) {
+          var target = event.target;
+          if (target.classList.contains("option")) {
+            if (bairrosSelecionados.some((bairro) => bairro.id === target.id)) {
+              //remover o bairo da lista e desmarcar document.getElementById("check"+ target.id).checked = true;
+              console.log(bairrosSelecionados);
+              bairrosSelecionados = bairrosSelecionados.filter(
+                (bairro) => bairro.id !== target.id
+              );
+              displayBairros();
+
+              document.getElementById("check" + target.id).checked = false;
+            } else {
+              if (
+                document.getElementById("check" + target.id).checked == false
+              ) {
+                document.getElementById("check" + target.id).checked = true;
+              } else {
+                document.getElementById("check" + target.id).checked = false;
+              }
+              bairrosSelecionados.push({
+                id: target.id,
+                bairro: target.textContent,
+              });
+              displayBairros();
+            }
+            // selectedOption.textContent = target.textContent;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

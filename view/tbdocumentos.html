@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualização de imagens</title>
+    <style>
+      /* Add your CSS styles here */
+    </style>
+  </head>
+  <body>
+    <div>
+      <p>JSON RETURN:</p>
+      <div id="respostaPHP"></div>
+      <img id="imagemPHP" src="" alt="" />
+      <img id="imagemPHP1" src="" alt="" />
+    </div>
+    <script>
+      var respostaPHP = document.getElementById("respostaPHP");
+      var imagemPHP = document.getElementById("imagemPHP");
+      var imagemPHP1 = document.getElementById("imagemPHP1");
+      // Send a request to ../controller/imagens.php
+    
+      fetch("../controller/imagens.php")
+        .then((response) => response.text())
+        .then((data) => {
+          // Print the result on screen
+          respostaPHP.innerHTML = data;
+          data = JSON.parse(data);
+          console.log(data.imagens[0].file);
+          imagemPHP.src = ``; // precisa dar um parse antes de exibir.. show de buela
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    </script>
+  </body>
+</html>
