@@ -10,15 +10,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($data !== null) {
         $titulo = isset($data['titulo']) ? $data['titulo'] : null;
-        $mensagem = isset($data['mensagem']) ? $data['mensagem'] : null;
+        $previsao = isset($data['previsao']) ? $data['previsao'] : null;
         $bairros = isset($data['bairros']) ? $data['bairros'] : null;
+        $linkNoticia = isset($data['linkNoticia']) ? $data['linkNoticia'] : null;
 
-        // echo "Titulo: " . $titulo . "<br>\nMensagem: " . $mensagem . "<br>\nBairros: " . implode(', ', $bairros);
+        // echo "Titulo: " . $titulo . "<br>\nprevisao: " . $previsao . "<br>\nBairros: " . implode(', ', $bairros);
 
         $ch = curl_init($url);
         $data = array(
             'titulo' => $titulo,
-            'descricao' => $mensagem,
+            'previsao' => $previsao,
+            'linkNoticia' =>$linkNoticia,
             'idBairros' => $bairros
         );
         $payload = json_encode($data);
@@ -26,6 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
+        if($result === false) {
+            echo "Erro no servidor!.";
+        }
+
         curl_close($ch);
         echo $result;
 
