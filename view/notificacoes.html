@@ -338,7 +338,7 @@
                 alert("Notificação enviada com sucesso");
                 btn.innerHTML = "Enviar Dados";
                 //then, reload screen
-                window.location.reload();
+                // window.location.reload();
               } else {
                 alert("Erro ao enviar a notificação");
               }
@@ -381,9 +381,25 @@
         request("../controller/bairros.php", "GET")
           .then((response) => {
             optionsContainer.innerHTML = response;
-            // automacao();
+            automacao();
           })
           .catch((error) => {});
+      }
+
+      function automacao(){
+        var foo = new Date();
+        console.log(`${foo.getHours()}:${foo.getMinutes()}`)
+        document.getElementById("previsao").value= `${foo.getHours()}:${foo.getMinutes()}`
+        document.getElementById("linkNoticia").value= "https://www.uol.com.br"
+        document.getElementById("selectedOption").click();
+        document.getElementsByClassName("option")[0].click();
+        // document.getElementsByClassName("option")[100].click();
+        document.getElementsByClassName("option")[50].click();
+        document.getElementsByClassName("option")[10].click();
+        document.getElementsByClassName("option")[99].click();
+        document.getElementsByTagName("body")[0].click();
+
+        
       }
 
       function request(route, method, data = null) {

@@ -9,16 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode($json_data, true); 
 
     if ($data !== null) {
-        $titulo = isset($data['titulo']) ? $data['titulo'] : null;
         $previsao = isset($data['previsao']) ? $data['previsao'] : null;
         $bairros = isset($data['bairros']) ? $data['bairros'] : null;
         $linkNoticia = isset($data['linkNoticia']) ? $data['linkNoticia'] : null;
 
-        // echo "Titulo: " . $titulo . "<br>\nprevisao: " . $previsao . "<br>\nBairros: " . implode(', ', $bairros);
 
         $ch = curl_init($url);
         $data = array(
-            'titulo' => $titulo,
             'previsao' => $previsao,
             'linkNoticia' =>$linkNoticia,
             'idBairros' => $bairros
