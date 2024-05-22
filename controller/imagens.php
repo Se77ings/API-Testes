@@ -1,10 +1,10 @@
 <?php
 
-$url = "http://192.168.0.215:3000/solicitacoes/solicitacao/15";
+$url = "http://192.168.0.216:3000/usuarios";
 
 // Initialize cURL
 $curl = curl_init($url);
-
+echo "Requição feita para: ".$url . "<br>";
 // Set cURL options
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
@@ -18,10 +18,10 @@ if ($response === false) {
     // Echo the response
     // $imageDecoded = base64_decode($response);
     $response = json_decode($response);
-    var_dump($response->imagens[0]->file);
-    $imagemDecodificada = base64_decode($response->imagens[0]->file);
-    echo $imagemDecodificada;
-    // echo $response;
+    // var_dump($response->imagens[0]->file);
+    // $imagemDecodificada = base64_decode($response->imagens[0]->file);
+    // echo $imagemDecodificada;
+    var_dump($response);
 }
 
 // Close cURL
