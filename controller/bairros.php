@@ -1,5 +1,5 @@
 <?php
-$url = '192.168.0.215:3000';
+$url = '192.168.0.216:3000';
 if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
     $ch = curl_init($url . '/consultaBairro');

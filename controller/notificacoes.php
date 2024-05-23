@@ -1,7 +1,7 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $json_data = file_get_contents('php://input');
-    $url= "192.168.0.215:3000/consultaBairro";
+    $url= "192.168.0.216:3000/consultaBairro";
     //POST, JSON
     
     $data = json_decode($json_data, true); 

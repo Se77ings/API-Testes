@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://192.168.0.216:3000/usuarios";
+$url = "http://192.168.0.216:3000/solicitacoes/solicitacao/2";
 
 // Initialize cURL
 $curl = curl_init($url);
