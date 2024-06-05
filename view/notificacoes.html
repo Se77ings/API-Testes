@@ -1,236 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0" />
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-			crossorigin="anonymous" />
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-		<title>Teste - Notificações:</title>
-		<style>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+	<title>Teste - Notificações:</title>
+	<style>
+		body {
+			display: flex;
+			justify-content: space-around;
+		}
+
+		.select-wrapper {
+			position: relative;
+			display: inline-block;
+			width: 100%;
+		}
+
+		.options-container {
+			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			width: 100%;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			z-index: 1;
+			max-height: 550px;
+			/* Defina a altura máxima desejada */
+			overflow-y: auto;
+			/* Habilita a barra de rolagem vertical apenas quando necessário */
+			position: absolute;
+		}
+
+		.option {
+			padding: 8px;
+			cursor: pointer;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+		}
+
+		.option:hover {
+			background-color: #f0f0f0;
+		}
+
+		#filtroBairros {
+			display: none;
+		}
+
+		#listaBairrosSelecionados {
+			list-style: none;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			padding-left: 0px;
+		}
+
+		#listaBairrosSelecionados li {
+			margin: 5px;
+			padding: 5px;
+			border: solid 1px black;
+			border-radius: 10px;
+		}
+
+		.option input[type="checkbox"] {
+			appearance: none;
+			width: 20px;
+			height: 20px;
+			border: 2px solid #555555;
+			background-color: #fff;
+			/* Cor de fundo do checkbox */
+			background-clip: content-box;
+			padding: 3px;
+			vertical-align: middle;
+			margin-right: 8px;
+			border-radius: 50%;
+		}
+
+		/* Estiliza o checkbox desativado quando está marcado */
+		.option input[type="checkbox"]:checked {
+			background-color: #007bff;
+			/* Cor do checkbox quando está marcado */
+		}
+
+		@media screen and (min-width: 300px) and (max-width: 500px) {
 			body {
 				display: flex;
-				justify-content: space-around;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+				padding: 20px;
 			}
+
 			.select-wrapper {
 				position: relative;
 				display: inline-block;
 				width: 100%;
 			}
 
-			.options-container {
-				display: none;
-				position: absolute;
-				top: 100%;
-				left: 0;
-				width: 100%;
-				background-color: #fff;
-				border: 1px solid #ccc;
-				z-index: 1;
-				max-height: 550px; /* Defina a altura máxima desejada */
-				overflow-y: auto; /* Habilita a barra de rolagem vertical apenas quando necessário */
-				position: absolute;
-			}
-
-			.option {
-				padding: 8px;
-				cursor: pointer;
-				display: flex;
-				flex-direction: row;
-				justify-content: space-between;
-			}
-
-			.option:hover {
-				background-color: #f0f0f0;
-			}
-			#filtroBairros {
-				display: none;
-			}
-			#listaBairrosSelecionados {
-				list-style: none;
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				padding-left: 0px;
-			}
-
-			#listaBairrosSelecionados li {
-				margin: 5px;
-				padding: 5px;
-				border: solid 1px black;
-				border-radius: 10px;
-			}
-
-			.option input[type="checkbox"] {
-				appearance: none;
-				width: 20px;
-				height: 20px;
-				border: 2px solid #555555;
-				background-color: #fff; /* Cor de fundo do checkbox */
-				background-clip: content-box;
-				padding: 3px;
-				vertical-align: middle;
-				margin-right: 8px;
-				border-radius: 50%;
-			}
-
-			/* Estiliza o checkbox desativado quando está marcado */
-			.option input[type="checkbox"]:checked {
-				background-color: #007bff; /* Cor do checkbox quando está marcado */
-			}
-
-			@media screen and (min-width: 300px) and (max-width: 500px) {
-				body {
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					align-items: center;
-					background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
-					padding: 20px;
-				}
-				.select-wrapper {
-					position: relative;
-					display: inline-block;
-					width: 100%;
-				}
-
-				.esq {
-					background-color: white;
-					padding: 10px;
-					border-radius: 30px;
-					padding-bottom: 25px;
-				}
-
-				.container {
-					margin-top: 10px;
-				}
-
-				#push {
-					padding: 10px;
-					border-radius: 30px;
-					background-color: white;
-				}
-
-				#notification {
-					padding: 10px;
-					border-radius: 30px;
-					background-color: white;
-					margin-bottom: 20px;
-				}
-				.dir {
-					padding: 10px;
-					border-radius: 30px;
-				}
-			}
-			#push {
-				border: solid 0.5px black;
-				border-radius: 10px;
-				padding: 15px;
-			}
-			.dir {
-				width: 400px;
-			}
-
-			.dir p {
-				margin: 0;
-			}
-			#notification {
-				border: solid 0.5px black;
-				border-radius: 10px;
-				height: 600px;
+			.esq {
+				background-color: white;
 				padding: 10px;
-				display: flex;
-				align-items: center;
-				text-align: justify;
+				border-radius: 30px;
+				padding-bottom: 25px;
 			}
+
 			.container {
-				margin-top: 35px;
+				margin-top: 10px;
 			}
-		</style>
-	</head>
-	<body onload="loadBairros()">
-		<div class="esq">
-			<div class="container">
-				<h1>Geração de Notificações por bairros</h1>
-				<!-- colocar checkbox nas listas: -->
-				<form
-					action=""
-					class="form-group">
-					<!-- <label for="titulo">Título:</label>
+
+			#push {
+				padding: 10px;
+				border-radius: 30px;
+				background-color: white;
+			}
+
+			#notification {
+				padding: 10px;
+				border-radius: 30px;
+				background-color: white;
+				margin-bottom: 20px;
+			}
+
+			.dir {
+				padding: 10px;
+				border-radius: 30px;
+			}
+		}
+
+		#push {
+			border: solid 0.5px black;
+			border-radius: 10px;
+			padding: 15px;
+		}
+
+		.dir {
+			width: 400px;
+		}
+
+		.dir p {
+			margin: 0;
+		}
+
+		#notification {
+			border: solid 0.5px black;
+			border-radius: 10px;
+			height: 600px;
+			padding: 10px;
+			display: flex;
+			align-items: center;
+			text-align: justify;
+		}
+
+		.container {
+			margin-top: 35px;
+		}
+	</style>
+</head>
+
+<body onload="loadBairros()">
+	<div class="esq">
+		<div class="container">
+			<h1>Geração de Notificações por bairros</h1>
+			<!-- colocar checkbox nas listas: -->
+			<form action="" class="form-group">
+				<!-- <label for="titulo">Título:</label>
           <input
             type="text"
             name="titulo"
             id="titulo"
             class="form-control mb-2"
           /> -->
-					<label for="previsao">Previsão de retorno:</label>
-					<input
-						type="time"
-						name="previsao"
-						id="previsao"
-						class="form-control mb-2"
-						onkeyup="exibirPrevisao(this.value)" />
-					<label for="linkNoticia">Link da Notícia:</label>
-					<input
-						type="text"
-						name="linkNoticia"
-						id="linkNoticia"
-						class="form-control mb-2"
-						onchange="linkarNoticia(this.value)" />
-					<div class="select-wrapper">
-						<label for="">Bairro(s):</label>
-						<div
-							class="selected-option form-select"
-							id="selectedOption">
-							Selecione um bairro
-						</div>
+				<label for="previsao">Previsão de retorno:</label>
+				<input type="time" name="previsao" id="previsao" class="form-control mb-2"
+					onkeyup="exibirPrevisao(this.value)" onchange="enableBtn()" />
+				<label for="linkNoticia">Link da Notícia:</label>
+				<input type="text" name="linkNoticia" id="linkNoticia" class="form-control mb-2"
+					onchange="linkarNoticia(this.value)" />
+				<div class="select-wrapper">
+					<label for="">Bairro(s):</label>
+					<div class="selected-option form-select" id="selectedOption">
 
-						<input
-							type="text"
-							id="filtroBairros"
-							class="form-control filtro"
-							placeholder="Filtrar bairros" />
-						<div
-							class="options-container"
-							id="optionsContainer"></div>
+						Selecione um bairro
 					</div>
-				</form>
-				<div id="bairrosSelecionados">
-					<hr />
-					<h3>Bairros selecionados:</h3>
-					<ul id="listaBairrosSelecionados"></ul>
+
+					<input type="text" id="filtroBairros" class="form-control filtro" placeholder="Filtrar bairros" />
+					<div class="options-container" id="optionsContainer"></div>
 				</div>
-			</div>
-			<div style="display: flex; flex-direction: row; justify-content: center">
-				<button
-					onclick="sendForm()"
-					class="btn btn-success">
-					Enviar Dados
-				</button>
+			</form>
+			<div id="bairrosSelecionados">
+				<hr />
+				<h3>Bairros selecionados:</h3>
+				<ul id="listaBairrosSelecionados"></ul>
 			</div>
 		</div>
-		<div class="dir" style="display:flex; justify-content:center">
-			<div class="container">
-				<h3>Como aparecerá para o usuário:</h3>
-				<h5>Notificação push:</h5>
-				<br />
-				<div id="push">
-					<p>Sua unidade XXXXXX-X poderá ser afetada</p>
-					<!-- <p id="bodyMSG">Manutenção no bairo: <b><span class="bairroSelecionados"></span></b></p> -->
-					<p>Clique para mais detalhes</p>
-				</div>
-				<br /><br />
-				<h5>Notificação completa</h5>
-				<br />
-				<div id="notification">
-					<!-- <div>
+		<div style="display: flex; flex-direction: row; justify-content: center">
+			<button onclick="sendForm()" class="btn btn-success">
+				Enviar Notificações
+			</button>
+		</div>
+	</div>
+	<div class="dir" style="display:flex; justify-content:center">
+		<div class="container">
+			<h3>Como aparecerá para o usuário:</h3>
+			<h5>Notificação push:</h5>
+			<br />
+			<div id="push">
+				<p>Sua unidade XXXXXX-X poderá ser afetada</p>
+				<!-- <p id="bodyMSG">Manutenção no bairo: <b><span class="bairroSelecionados"></span></b></p> -->
+				<p>Clique para mais detalhes</p>
+			</div>
+			<br /><br />
+			<h5>Notificação completa</h5>
+			<br />
+			<div id="notification">
+				<!-- <div>
             <p style="margin-bottom: 35px;"><b>SAAEB Informa:</b></p>
             <p>
               Haverá manutenção no bairro:
@@ -242,271 +231,293 @@
               <span id="spanLinkNoticia"></span>
             </p>
           </div> -->
-					<!-- <div>
+				<!-- <div>
             <p>🔧 Nesse início de manhã de quinta-feira (04), estamos realizando um reparo de um hidrante no bairro Tamboré.</p>
             <p>💧 O abastecimento de água ficará interrompido na região do Tamboré.</p>
             <p>⏰ Previsão de normalização: 11h.</p>
             <p>📞 Aqueles que precisarem de caminhão-pipa podem solicitar pelos telefones: (17) 3321 5300 ou 0800 772 5300</p>
             <p>🚿 Orientamos para que os registros sejam fechados a fim de que a água, ao retornar, não tenha coloração ou terra.</p>
           </div> -->
-					<div>
-						<div style="display: flex; flex-direction: row; justify-content: space-between">
-							<p style="margin-bottom: 35px"><b>SAAEB Informa:</b></p>
-							<p id="dataHoje"></p>
-						</div>
-						<p>
-							Haverá manutenção no(s) bairro(s):
-							<b><span id="bairroSelecionado"></span></b> E sua unidade poderá ser afetada, o abastecimento de água ficará interrompido até <b><span id="spanPrevisaoHorario"></span></b>.
-						</p>
-						<br />
-						<p>Recomendamos que feche os registros, a fim de que a água, ao retornar, não tenha coloração ou terra.</p>
-						<br />
-						<p>Aqueles que precisarem de caminhão pipa, podem solicitar pelos telefones: (17) 3321 5300 ou 0800 772 5300</p>
-
-						<p>
-							para mais informações, vide a notícia:
-							<span id="spanLinkNoticia"></span>
-						</p>
+				<div>
+					<div style="display: flex; flex-direction: row; justify-content: space-between">
+						<p style="margin-bottom: 35px"><b>SAAEB Informa:</b></p>
+						<p id="dataHoje"></p>
 					</div>
+					<p>
+						Haverá manutenção no(s) bairro(s):
+						<b><span id="bairroSelecionado"></span></b> E sua unidade poderá ser afetada, o abastecimento de
+						água ficará interrompido até <b><span id="spanPrevisaoHorario"></span></b>.
+					</p>
+					<br />
+					<p>Recomendamos que feche os registros, a fim de que a água, ao retornar, não tenha coloração ou
+						terra.</p>
+					<br />
+					<p>Aqueles que precisarem de caminhão pipa, podem solicitar pelos telefones: (17) 3321 5300 ou 0800
+						772 5300</p>
+
+					<p>
+						para mais informações, vide a notícia:
+						<span id="spanLinkNoticia"></span>
+					</p>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<script
-			src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-			crossorigin="anonymous"></script>
-		<script>
-			var bairrosSelecionados = [];
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+	<script>
 
-			exibeDataHoje();
 
-			function exibeDataHoje() {
-				dataHoje = document.getElementById("dataHoje");
-				var data = new Date();
-				let str = "tst";
+		var btn = document.querySelector("button");
 
-				dataHoje.innerHTML = data.getDate() + "/" + (data.getMonth() <= 9 ? "0" + (data.getMonth() + 1) : data.getMonth() + 1) + "/" + data.getFullYear();
+		var bairrosSelecionados = [];
+
+		exibeDataHoje();
+
+		function exibeDataHoje() {
+			dataHoje = document.getElementById("dataHoje");
+			var data = new Date();
+			let str = "tst";
+
+			dataHoje.innerHTML = data.getDate() + "/" + (data.getMonth() <= 9 ? "0" + (data.getMonth() + 1) : data.getMonth() + 1) + "/" + data.getFullYear();
+		}
+
+		function enableBtn() {
+			btn.disabled = false
+		}
+
+		function exibirPrevisao(digitado) {
+			if (digitado <= 24) {
+				document.getElementById("spanPrevisaoHorario").innerHTML = digitado == 1 || digitado == 13 ? digitado + "h" : digitado + "hrs";
+			} else {
+				document.getElementById("spanPrevisaoHorario").innerHTML = "---";
 			}
+		}
 
-			function exibirPrevisao(digitado) {
-				if (digitado <= 24) {
-					document.getElementById("spanPrevisaoHorario").innerHTML = digitado == 1 || digitado == 13 ? digitado + "h" : digitado + "hrs";
+		function exibirBairrosSelecionados() {
+			if (bairrosSelecionados.length > 0) {
+				divsBairrosSelecionados = document.getElementById("bairroSelecionado");
+				if (bairrosSelecionados.length > 1) {
+					divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro).join(", ");
 				} else {
-					document.getElementById("spanPrevisaoHorario").innerHTML = "---";
+					divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro);
 				}
 			}
+		}
 
-			function exibirBairrosSelecionados() {
-				if (bairrosSelecionados.length > 0) {
-					divsBairrosSelecionados = document.getElementById("bairroSelecionado");
-					if (bairrosSelecionados.length > 1) {
-						divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro).join(", ");
-					} else {
-						divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro);
-					}
-				}
+		function linkarNoticia(noticia) {
+			btn.disabled = false;
+			var spanNoticia = document.getElementById("spanLinkNoticia");
+			var anchor = document.createElement("a");
+			anchor.href = noticia;
+			anchor.target = "_blank";
+			anchor.innerHTML = "Clique aqui!";
+			// spanNoticia.innerHTML = anchor;
+			spanNoticia.appendChild(anchor);
+		}
+
+		function sendForm() {
+			var previsao = document.getElementById("previsao").value;
+			var linkNoticia = document.getElementById("linkNoticia").value;
+			var bairros = bairrosSelecionados.map((bairro) => bairro.id);
+			btn.disabled = true;
+			if (previsao == "") {
+				alert("Previsão de retorno não pode ser vazia");
+				return;
 			}
-
-			function linkarNoticia(noticia) {
-				var spanNoticia = document.getElementById("spanLinkNoticia");
-				var anchor = document.createElement("a");
-				anchor.href = noticia;
-				anchor.target = "_blank";
-				anchor.innerHTML = "Clique aqui!";
-				// spanNoticia.innerHTML = anchor;
-				spanNoticia.appendChild(anchor);
+			if (linkNoticia == "") {
+				alert("Link da notícia não pode ser vazio");
+				return;
 			}
-
-			function sendForm() {
-				var previsao = document.getElementById("previsao").value;
-				var linkNoticia = document.getElementById("linkNoticia").value;
-				var bairros = bairrosSelecionados.map((bairro) => bairro.id);
-				var btn = document.querySelector("button");
-				btn.disabled = true;
-				if (previsao == "") {
-					alert("Previsão de retorno não pode ser vazia");
-					return;
-				}
-				if (linkNoticia == "") {
-					alert("Link da notícia não pode ser vazio");
-					return;
-				}
-				if (bairros.length == 0) {
-					alert("Selecione pelo menos um bairro");
-					return;
-				}
-				console.log(bairros);
-				request("../controller/notificacoes.php", "POST", {
-					previsao: previsao,
-					// mensagem: descrico,
-					linkNoticia: linkNoticia,
-					bairros: bairros,
-				})
-					.then((response) => {
-						console.log(response);
-
-						if (response) {
-							bairrosSelecionados = [];
-							//melhor reload
-							displayBairros();
-							if (response.indexOf("error") != -1) {
-								alert("Nenhum usuário encontrado para o bairro informado!");
-								btn.innerHTML = "Enviar Dados";
-								return;
+			if (bairros.length == 0) {
+				alert("Selecione pelo menos um bairro");
+				btn.disabled = false;
+				return;
+			}
+			console.log(bairros);
+			request("../controller/notificacoes.php", "POST", {
+				previsao: previsao,
+				// mensagem: descrico,
+				linkNoticia: linkNoticia,
+				bairros: bairros,
+			})
+				.then((response) => {
+					if (response) {
+						bairrosSelecionados = [];
+						//melhor reload
+						displayBairros();
+						if (response.indexOf("error") != -1) {
+							console.log(response)
+							alert("Não há nenhum usuário cadastrado para este bairro!");
+							window.location.reload();
+							return;
+						}
+						//string(84) "{"titulo":"Titulo automação","mensagem":"Descrição automação","bairros":["2"]}"
+						//{"error":"Nenhum usuário encontrado para o bairro informado!"}
+						// alert(response);
+						var responseJSON = JSON.parse(response);
+						console.log(responseJSON);
+						if (responseJSON.message) {
+							let corretas = responseJSON.corretas;
+							let erradas = responseJSON.erradas;
+							if(erradas == 0){
+								let string = `${corretas} ${corretas > 1? "Usuários receberam": "Usuário recebeu"}. Não houve nenhuma falha no envio de notificações`
+								alert(string); 
+								console.log(string)
+							}else{
+								let string = `${corretas} ${corretas > 1? "Usuários receberam": "Usuário recebeu"}, e ${erradas} ${erradas > 1 ? "Não conseguiram receber" : "não recebeu"}.`
+								alert(string); 
+								console.log(string)
 							}
-							//string(84) "{"titulo":"Titulo automação","mensagem":"Descrição automação","bairros":["2"]}"
-							//{"error":"Nenhum usuário encontrado para o bairro informado!"}
-							// alert(response);
-							var responseJSON = JSON.parse(response);
-							console.log(responseJSON);
-							if (responseJSON.message) {
-								alert("Notificação enviada com sucesso!");
-							} else {
-								alert("Erro ao enviar a notificação");
-							}
-							btn.innerHTML = "Enviar Dados";
-							//then, reload screen
-							// window.location.reload();
 						} else {
+							console.log(responseJSON)
 							alert("Erro ao enviar a notificação");
 						}
-					})
-					.catch((error) => {});
-			}
-			function displayBairros() {
-				var listaBairrosSelecionados = document.getElementById("listaBairrosSelecionados");
-				listaBairrosSelecionados.innerHTML = "";
+						//then, reload screen
+						window.location.reload();
+					} else {
+						console.log(response)
+						alert("Erro ao enviar a notificação");
+					}
+				})
+				.catch((error) => { });
+		}
+		function displayBairros() {
+			var listaBairrosSelecionados = document.getElementById("listaBairrosSelecionados");
+			listaBairrosSelecionados.innerHTML = "";
 
-				bairrosSelecionados.forEach((bairro) => {
-					var li = document.createElement("li");
-					li.textContent = bairro.bairro;
-					li.id = bairro.id;
+			bairrosSelecionados.forEach((bairro) => {
+				var li = document.createElement("li");
+				li.textContent = bairro.bairro;
+				li.id = bairro.id;
 
-					var lixeira = document.createElement("i");
-					lixeira.classList.add("bi");
-					lixeira.classList.add("bi-trash3-fill");
-					lixeira.style.cursor = "pointer";
-					lixeira.style.marginLeft = "5px";
+				var lixeira = document.createElement("i");
+				lixeira.classList.add("bi");
+				lixeira.classList.add("bi-trash3-fill");
+				lixeira.style.cursor = "pointer";
+				lixeira.style.marginLeft = "5px";
 
-					lixeira.onclick = () => {
-						bairrosSelecionados = bairrosSelecionados.filter((b) => b.id !== li.id);
+				lixeira.onclick = () => {
+					bairrosSelecionados = bairrosSelecionados.filter((b) => b.id !== li.id);
+					displayBairros();
+					exibirBairrosSelecionados();
+				};
+
+				li.appendChild(lixeira);
+				listaBairrosSelecionados.appendChild(li);
+			});
+		}
+
+		function loadBairros() {
+			var optionsContainer = document.getElementById("optionsContainer");
+			request("../controller/bairros.php", "GET")
+				.then((response) => {
+					optionsContainer.innerHTML = response;
+					// automacao();
+				})
+				.catch((error) => { });
+		}
+
+		function automacao() {
+			var foo = new Date();
+			console.log(`${foo.getHours()}:${foo.getMinutes()}`);
+			document.getElementById("previsao").value = `${foo.getHours()}:${foo.getMinutes()}`;
+			document.getElementById("linkNoticia").value = "https://www.uol.com.br";
+			document.getElementById("selectedOption").click();
+			document.getElementsByClassName("option")[8].click();
+			document.getElementsByClassName("option")[50].click();
+			document.getElementsByClassName("option")[99].click();
+			document.getElementsByTagName("body")[0].click();
+		}
+
+		function request(route, method, data = null) {
+			return new Promise((resolve, reject) => {
+				let xhr = new XMLHttpRequest();
+				xhr.open(method, route, true);
+
+				// Configura os cabeçalhos CORS
+				xhr.setRequestHeader("Access-Control-Allow-Origin", "*"); // Define a origem permitida como *
+				xhr.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4) {
+						if (xhr.status == 200) {
+							resolve(xhr.responseText);
+						} else {
+							reject(xhr.status);
+						}
+					}
+				};
+				xhr.send(JSON.stringify(data));
+			});
+		}
+		document.addEventListener("DOMContentLoaded", function () {
+			var selectedOption = document.getElementById("selectedOption");
+			var optionsContainer = document.getElementById("optionsContainer");
+			var filtroBairros = document.getElementById("filtroBairros");
+
+			selectedOption.addEventListener("click", function () {
+				optionsContainer.style.display = "block";
+				filtroBairros.style.display = "block";
+				filtroBairros.focus();
+			});
+
+			document.addEventListener("click", function (event) {
+				var target = event.target;
+				if (target.id !== "selectedOption" && target.id !== "filtroBairros" && target.classList.contains("option") === false) {
+					optionsContainer.style.display = "none";
+					filtroBairros.style.display = "none";
+				}
+			});
+
+			filtroBairros.addEventListener("input", function () {
+				var filtroTexto = filtroBairros.value.toUpperCase();
+				var options = optionsContainer.getElementsByClassName("option");
+				for (var i = 0; i < options.length; i++) {
+					var option = options[i];
+					var texto = option.textContent.toUpperCase();
+					if (texto.indexOf(filtroTexto) > -1) {
+						option.style.display = "";
+					} else {
+						option.style.display = "none";
+					}
+				}
+			});
+
+			filtroBairros.addEventListener("click", function (event) {
+				this.select();
+			});
+
+			// Selecionar a opção clicada
+			optionsContainer.addEventListener("click", function (event) {
+				var target = event.target;
+				if (target.classList.contains("option")) {
+					if (bairrosSelecionados.some((bairro) => bairro.id === target.id)) {
+						//remover o bairo da lista e desmarcar document.getElementById("check"+ target.id).checked = true;
+						bairrosSelecionados = bairrosSelecionados.filter((bairro) => bairro.id !== target.id);
+						displayBairros();
+
+						document.getElementById("check" + target.id).checked = false;
+					} else {
+						if (document.getElementById("check" + target.id).checked == false) {
+							document.getElementById("check" + target.id).checked = true;
+						} else {
+							document.getElementById("check" + target.id).checked = false;
+						}
+						bairrosSelecionados.push({
+							id: target.id,
+							bairro: target.textContent,
+						});
 						displayBairros();
 						exibirBairrosSelecionados();
-					};
-
-					li.appendChild(lixeira);
-					listaBairrosSelecionados.appendChild(li);
-				});
-			}
-
-			function loadBairros() {
-				var optionsContainer = document.getElementById("optionsContainer");
-				request("../controller/bairros.php", "GET")
-					.then((response) => {
-						optionsContainer.innerHTML = response;
-						// automacao();
-					})
-					.catch((error) => {});
-			}
-
-			function automacao() {
-				var foo = new Date();
-				console.log(`${foo.getHours()}:${foo.getMinutes()}`);
-				document.getElementById("previsao").value = `${foo.getHours()}:${foo.getMinutes()}`;
-				document.getElementById("linkNoticia").value = "https://www.uol.com.br";
-				document.getElementById("selectedOption").click();
-				document.getElementsByClassName("option")[8].click();
-				document.getElementsByClassName("option")[50].click();
-				document.getElementsByClassName("option")[99].click();
-				document.getElementsByTagName("body")[0].click();
-			}
-
-			function request(route, method, data = null) {
-				return new Promise((resolve, reject) => {
-					let xhr = new XMLHttpRequest();
-					xhr.open(method, route, true);
-
-					// Configura os cabeçalhos CORS
-					xhr.setRequestHeader("Access-Control-Allow-Origin", "*"); // Define a origem permitida como *
-					xhr.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-
-					xhr.onreadystatechange = function () {
-						if (xhr.readyState == 4) {
-							if (xhr.status == 200) {
-								resolve(xhr.responseText);
-							} else {
-								reject(xhr.status);
-							}
-						}
-					};
-					xhr.send(JSON.stringify(data));
-				});
-			}
-			document.addEventListener("DOMContentLoaded", function () {
-				var selectedOption = document.getElementById("selectedOption");
-				var optionsContainer = document.getElementById("optionsContainer");
-				var filtroBairros = document.getElementById("filtroBairros");
-
-				selectedOption.addEventListener("click", function () {
-					optionsContainer.style.display = "block";
-					filtroBairros.style.display = "block";
-					filtroBairros.focus();
-				});
-
-				document.addEventListener("click", function (event) {
-					var target = event.target;
-					if (target.id !== "selectedOption" && target.id !== "filtroBairros" && target.classList.contains("option") === false) {
-						optionsContainer.style.display = "none";
-						filtroBairros.style.display = "none";
 					}
-				});
-
-				filtroBairros.addEventListener("input", function () {
-					var filtroTexto = filtroBairros.value.toUpperCase();
-					var options = optionsContainer.getElementsByClassName("option");
-					for (var i = 0; i < options.length; i++) {
-						var option = options[i];
-						var texto = option.textContent.toUpperCase();
-						if (texto.indexOf(filtroTexto) > -1) {
-							option.style.display = "";
-						} else {
-							option.style.display = "none";
-						}
-					}
-				});
-
-				filtroBairros.addEventListener("click", function (event) {
-					this.select();
-				});
-
-				// Selecionar a opção clicada
-				optionsContainer.addEventListener("click", function (event) {
-					var target = event.target;
-					if (target.classList.contains("option")) {
-						if (bairrosSelecionados.some((bairro) => bairro.id === target.id)) {
-							//remover o bairo da lista e desmarcar document.getElementById("check"+ target.id).checked = true;
-							bairrosSelecionados = bairrosSelecionados.filter((bairro) => bairro.id !== target.id);
-							displayBairros();
-
-							document.getElementById("check" + target.id).checked = false;
-						} else {
-							if (document.getElementById("check" + target.id).checked == false) {
-								document.getElementById("check" + target.id).checked = true;
-							} else {
-								document.getElementById("check" + target.id).checked = false;
-							}
-							bairrosSelecionados.push({
-								id: target.id,
-								bairro: target.textContent,
-							});
-							displayBairros();
-							exibirBairrosSelecionados();
-						}
-						// selectedOption.textContent = target.textContent;
-					}
-				});
+					// selectedOption.textContent = target.textContent;
+				}
 			});
-		</script>
-	</body>
+		});
+	</script>
+</body>
+
 </html>
