@@ -7,6 +7,7 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+	<link rel="icon" href="favicon.ico" sizes="64x64" />
 	<title>Teste - Notificações:</title>
 	<style>
 		body {
@@ -85,6 +86,14 @@
 		.option input[type="checkbox"]:checked {
 			background-color: #007bff;
 			/* Cor do checkbox quando está marcado */
+		}
+
+		#divDinamic:hover {
+			border: dashed 1px black;
+		}
+
+		#notification {
+			font-family: Arial, Helvetica, sans-serif;
 		}
 
 		@media screen and (min-width: 300px) and (max-width: 500px) {
@@ -169,24 +178,31 @@
 			<h1>Geração de Notificações por bairros</h1>
 			<!-- colocar checkbox nas listas: -->
 			<form action="" class="form-group">
-				<!-- <label for="titulo">Título:</label>
-          <input
-            type="text"
-            name="titulo"
-            id="titulo"
-            class="form-control mb-2"
-          /> -->
-				<label for="previsao">Previsão de retorno:</label>
+				<select class="form-select" id="tipoNotificacao" onchange="renderExample('tipoNotificacao', this)">
+					<option id='naoSelecionado' selected hidden>Escolha um tipo de notificação</option>
+				</select> <!-- <label for="previsao">Prevtipoisão de retorno:</label>
 				<input type="time" name="previsao" id="previsao" class="form-control mb-2"
-					onkeyup="exibirPrevisao(this.value)" onchange="enableBtn()" />
-				<label for="linkNoticia">Link da Notícia:</label>
+					onkeyup="exibirPrevisao(this.value)" onchange="enableBtn()" /> -->
+				<!-- <label for="linkNoticia">Link da Notícia:</label>
 				<input type="text" name="linkNoticia" id="linkNoticia" class="form-control mb-2"
-					onchange="linkarNoticia(this.value)" />
-				<div class="select-wrapper">
+					onchange="linkarNoticia(this.value)" /> -->
+				<label for="corpoMensagem" class="mt-3">Corpo do texto da notificação:</label>
+				<textarea type="text" name="corpoMensagem" id="corpoMensagem"
+					onkeyup="renderExample('body', this.value)" class="form-control mb-3"
+					style="height: 300px;"></textarea>
+				<div class="form-check px-0" style="display:flex; align-items: center;">
+
+					<label for="notificaTodos" style="padding: 10px 0px; padding-right: 20px">Notificar todos os
+						usuários:</label>
+					<input type="checkbox" name="notificaTodos" id="notificaTodos"
+						onchange="renderExample('notificaTodos', this.checked)" class="form-check-label"
+						style="width: 20px; height: 20px;">
+				</div>
+				<div class="select-wrapper mt-1" id="divBairros">
 					<label for="">Bairro(s):</label>
 					<div class="selected-option form-select" id="selectedOption">
 
-						Selecione um bairro
+						Selecione um bairro, ou mais
 					</div>
 
 					<input type="text" id="filtroBairros" class="form-control filtro" placeholder="Filtrar bairros" />
@@ -195,7 +211,7 @@
 			</form>
 			<div id="bairrosSelecionados">
 				<hr />
-				<h3>Bairros selecionados:</h3>
+				<h3 id="h3BairrosSelecionados">Bairros selecionados:</h3>
 				<ul id="listaBairrosSelecionados"></ul>
 			</div>
 		</div>
@@ -211,12 +227,12 @@
 			<h5>Notificação push:</h5>
 			<br />
 			<div id="push">
-				<p>Sua unidade XXXXXX-X poderá ser afetada</p>
+				<p>SAAE Barretos informa:</p>
 				<!-- <p id="bodyMSG">Manutenção no bairo: <b><span class="bairroSelecionados"></span></b></p> -->
-				<p>Clique para mais detalhes</p>
+				<p>Sua unidade XXXXXX será afetada</p>
 			</div>
 			<br /><br />
-			<h5>Notificação completa</h5>
+			<h5 style="text-align: center;">Pré Visualização:</h5>
 			<br />
 			<div id="notification">
 				<!-- <div>
@@ -239,26 +255,42 @@
             <p>🚿 Orientamos para que os registros sejam fechados a fim de que a água, ao retornar, não tenha coloração ou terra.</p>
           </div> -->
 				<div>
+					<p style="text-align: center; font-size: 15px; font-weight: bold; padding-bottom: 15px;">DETALHE DA
+						NOTIFICAÇÃO</p>
 					<div style="display: flex; flex-direction: row; justify-content: space-between">
-						<p style="margin-bottom: 35px"><b>SAAEB Informa:</b></p>
+						<p style="margin-bottom: 15px; font-size: 20px; font-weight: bold;"><b
+								id="notificationType">Manutenção no Bairro:</b></p>
 						<p id="dataHoje"></p>
 					</div>
-					<p>
-						Haverá manutenção no(s) bairro(s):
-						<b><span id="bairroSelecionado"></span></b> E sua unidade poderá ser afetada, o abastecimento de
-						água ficará interrompido até <b><span id="spanPrevisaoHorario"></span></b>.
-					</p>
-					<br />
-					<p>Recomendamos que feche os registros, a fim de que a água, ao retornar, não tenha coloração ou
-						terra.</p>
-					<br />
-					<p>Aqueles que precisarem de caminhão pipa, podem solicitar pelos telefones: (17) 3321 5300 ou 0800
-						772 5300</p>
+					<div id="todosAfetados">
+						<p style="text-align: left; font-size: 15px; margin-bottom: 10; font-weight: 550;">UNIDADE:
+							XXXXXX-X</p>
+						<p style="text-align: left; font-size: 15px; margin-bottom: 10; font-weight: 550;">BAIRROS
+							AFETADOS: <b id="bairrosAfetados"></b> </p><br>
+					</div>
+					<div id="divDinamic"
+						style=" font-size: 15px; margin-bottom: 10; font-weight: 550; line-height: 16px;"
+						title="Esse texto é inserido de forma dinâmica">
 
-					<p>
+						<p>
+							Haverá manutenção no(s) bairro(s):
+							<b><span id="bairroSelecionado"></span></b> E sua unidade poderá ser afetada, o
+							abastecimento de
+							água ficará interrompido até <b><span id="spanPrevisaoHorario"></span></b>.
+						</p>
+						<br />
+						<p>Recomendamos que feche os registros, a fim de que a água, ao retornar, não tenha coloração ou
+							terra.</p>
+						<br />
+						<p>Aqueles que precisarem de caminhão pipa, podem solicitar pelos telefones: (17) 3321 5300 ou
+							0800
+							772 5300</p>
+
+					</div>
+					<!-- <p>
 						para mais informações, vide a notícia:
 						<span id="spanLinkNoticia"></span>
-					</p>
+					</p> -->
 				</div>
 			</div>
 		</div>
@@ -268,18 +300,60 @@
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous"></script>
 	<script>
-
-
+		//preciso ter variaveis globais, que a depender do valor delas, ter ações diferentes
 		var btn = document.querySelector("button");
-
 		var bairrosSelecionados = [];
 
-		exibeDataHoje();
 
+		function renderExample(type, value) {
+
+			var tipoNotificacao = document.getElementById("tipoNotificacao").value;
+			var notificaTodos = document.getElementById("notificaTodos").checked;
+			var divBairros = document.getElementById("divBairros");
+			var h3BairrosSelecionados = document.getElementById("h3BairrosSelecionados")
+			var listaBairrosSelecionados = document.getElementById("listaBairrosSelecionados")
+
+			if (type == "tipoNotificacao") {
+				var notificationType = document.getElementById("notificationType");
+				var opcaoSelecionada = value.options[value.options.selectedIndex].innerHTML;
+				notificationType.innerHTML = opcaoSelecionada + ":";
+			} else
+				if (type == "notificaTodos") {
+					var todosAfetados = document.getElementById("todosAfetados");
+					if (value == true) {
+						todosAfetados.style.display = `none`;
+						divBairros.style.display = `none`;
+						h3BairrosSelecionados.innerHTML = "Atenção: TODOS OS BAIRROS SELECIONADOS"
+						h3BairrosSelecionados.style.color = "red";
+						listaBairrosSelecionados.style.display = "none"
+						setTimeout(() => {
+							h3BairrosSelecionados.style.color = "black";
+						}, 2000)
+					} else {
+						h3BairrosSelecionados.innerHTML = "Bairros Selecionados:"
+						h3BairrosSelecionados.style.color = "black";
+						divBairros.style.display = `inline-block`;
+						listaBairrosSelecionados.style.display = "flex"
+						todosAfetados.style.display = `block`
+					}
+				} else
+					if (type == "body") {
+						var divDinamic = document.getElementById("divDinamic");
+						divDinamic.innerHTML = value.replace(/\n/g, '<br>');
+						divDinamic.style.borderStyle = "dashed"
+						divDinamic.style.borderWidth = "0.5px"
+						setTimeout(() => {
+							divDinamic.style.borderStyle = "none"
+						}, 1000)
+
+					}
+		}
+
+		// exibeDataHoje();
+		//deprecated:
 		function exibeDataHoje() {
 			dataHoje = document.getElementById("dataHoje");
 			var data = new Date();
-			let str = "tst";
 
 			dataHoje.innerHTML = data.getDate() + "/" + (data.getMonth() <= 9 ? "0" + (data.getMonth() + 1) : data.getMonth() + 1) + "/" + data.getFullYear();
 		}
@@ -288,6 +362,7 @@
 			btn.disabled = false
 		}
 
+		//deprecated:
 		function exibirPrevisao(digitado) {
 			if (digitado <= 24) {
 				document.getElementById("spanPrevisaoHorario").innerHTML = digitado == 1 || digitado == 13 ? digitado + "h" : digitado + "hrs";
@@ -296,17 +371,22 @@
 			}
 		}
 
+		//deprecated:
 		function exibirBairrosSelecionados() {
 			if (bairrosSelecionados.length > 0) {
 				divsBairrosSelecionados = document.getElementById("bairroSelecionado");
 				if (bairrosSelecionados.length > 1) {
-					divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro).join(", ");
+
+					// divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro).join(", ");
+					bairrosAfetados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro).join(", ");
 				} else {
-					divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro);
+					// divsBairrosSelecionados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro);
+					bairrosAfetados.innerHTML = bairrosSelecionados.map((bairro) => bairro.bairro);
 				}
 			}
 		}
 
+		//deprecated:
 		function linkarNoticia(noticia) {
 			btn.disabled = false;
 			var spanNoticia = document.getElementById("spanLinkNoticia");
@@ -318,72 +398,121 @@
 			spanNoticia.appendChild(anchor);
 		}
 
+
+
+		/*
+
+			var tipoNotificacao = document.getElementById("tipoNotificacao").value;
+			var notificaTodos = document.getElementById("notificaTodos").checked;
+			var divBairros = document.getElementById("divBairros");
+			var h3BairrosSelecionados = document.getElementById("h3BairrosSelecionados")
+			var listaBairrosSelecionados= document.getElementById("listaBairrosSelecionados")
+
+		*/
 		function sendForm() {
-			var previsao = document.getElementById("previsao").value;
-			var linkNoticia = document.getElementById("linkNoticia").value;
+			var tipoNotificacao = document.getElementById("tipoNotificacao").options[document.getElementById("tipoNotificacao").options.selectedIndex]
+			var corpoMensagem = document.getElementById("corpoMensagem").value.replace(/\n/g, '<br>') //  <-- quebra de linha
+			var notificaTodos = document.getElementById("notificaTodos").checked
 			var bairros = bairrosSelecionados.map((bairro) => bairro.id);
-			btn.disabled = true;
-			if (previsao == "") {
-				alert("Previsão de retorno não pode ser vazia");
-				return;
+
+			console.log(corpoMensagem)
+
+			if (tipoNotificacao.id == "naoSelecionado") {
+				document.getElementById("tipoNotificacao").style.borderColor = "red"
+				document.getElementById("tipoNotificacao").style.borderWidth = "2px"
+				setTimeout(() => {
+					alert("Atenção!! Selecione um tipo de notificação");
+					setTimeout(() => {
+						document.getElementById("tipoNotificacao").style.borderColor = "#ced4da"
+						document.getElementById("tipoNotificacao").style.borderWidth = "1px"
+						}, 1000)
+						}, 100)
+					return;
 			}
-			if (linkNoticia == "") {
-				alert("Link da notícia não pode ser vazio");
-				return;
-			}
-			if (bairros.length == 0) {
-				alert("Selecione pelo menos um bairro");
-				btn.disabled = false;
-				return;
-			}
-			console.log(bairros);
-			request("../controller/notificacoes.php", "POST", {
-				previsao: previsao,
-				// mensagem: descrico,
-				linkNoticia: linkNoticia,
-				bairros: bairros,
-			})
-				.then((response) => {
-					if (response) {
-						bairrosSelecionados = [];
-						//melhor reload
-						displayBairros();
-						if (response.indexOf("error") != -1) {
-							console.log(response)
-							alert("Não há nenhum usuário cadastrado para este bairro!");
-							window.location.reload();
-							return;
-						}
-						//string(84) "{"titulo":"Titulo automação","mensagem":"Descrição automação","bairros":["2"]}"
-						//{"error":"Nenhum usuário encontrado para o bairro informado!"}
-						// alert(response);
-						var responseJSON = JSON.parse(response);
-						console.log(responseJSON);
-						if (responseJSON.message) {
-							let corretas = responseJSON.corretas;
-							let erradas = responseJSON.erradas;
-							if(erradas == 0){
-								let string = `${corretas} ${corretas > 1? "Usuários receberam": "Usuário recebeu"}. Não houve nenhuma falha no envio de notificações`
-								alert(string); 
-								console.log(string)
-							}else{
-								let string = `${corretas} ${corretas > 1? "Usuários receberam": "Usuário recebeu"}, e ${erradas} ${erradas > 1 ? "Não conseguiram receber" : "não recebeu"}.`
-								alert(string); 
-								console.log(string)
-							}
-						} else {
-							console.log(responseJSON)
-							alert("Erro ao enviar a notificação");
-						}
-						//then, reload screen
-						window.location.reload();
-					} else {
-						console.log(response)
-						alert("Erro ao enviar a notificação");
-					}
-				})
-				.catch((error) => { });
+
+				if(corpoMensagem == ""){
+					document.getElementById("corpoMensagem").style.borderColor= "red"
+					document.getElementById("corpoMensagem").style.borderWidth = "2px"
+					setTimeout(() => {
+					alert("Atenção!! Corpo do Texto vazio");
+					setTimeout(() => {
+						document.getElementById("corpoMensagem").style.borderColor = "#ced4da"
+						document.getElementById("corpoMensagem").style.borderWidth = "1px"
+						}, 1000)
+						}, 100)
+					return;
+				}
+
+				//Continuar a partir daqui:
+				console.log("nao existo")
+
+				
+			// var previsao = document.getElementById("previsao").value; //retirado
+			// var linkNoticia = document.getElementById("linkNoticia").value; //retirado
+			// var bairros = bairrosSelecionados.map((bairro) => bairro.id);
+			// btn.disabled = true;
+			// if (previsao == "") {
+			// 	alert("Previsão de retorno não pode ser vazia");
+			// 	return;
+			// }
+			// if (linkNoticia == "") {
+			// 	alert("Link da notícia não pode ser vazio");
+			// 	return;
+			// }
+			// if (bairros.length == 0) {
+			// 	alert("Selecione pelo menos um bairro");
+			// 	btn.disabled = false;
+			// 	return;
+			// }
+			// console.log(bairros);
+			// request("../controller/notificacoes.php", "POST", {
+			// 	previsao: previsao,
+			// 	// mensagem: descrico,
+			// 	linkNoticia: linkNoticia,
+			// 	bairros: bairros,
+			// })
+			// 	.then((response) => {
+			// 		if (response) {
+			// 			bairrosSelecionados = [];
+			// 			//melhor reload
+			// 			displayBairros();
+			// 			if (response.indexOf("error") != -1) {
+			// 				console.log(response)
+			// 				alert("Não há nenhum usuário cadastrado para este bairro!");
+			// 				window.location.reload();
+			// 				return;
+			// 			}
+			// 			//string(84) "{"titulo":"Titulo automação","mensagem":"Descrição automação","bairros":["2"]}"
+			// 			//{"error":"Nenhum usuário encontrado para o bairro informado!"}
+			// 			// alert(response);
+			// 			var responseJSON = JSON.parse(response);
+			// 			console.log(responseJSON);
+			// 			if (responseJSON.message) {
+			// 				let corretas = responseJSON.corretas;
+			// 				let erradas = responseJSON.erradas;
+			// 				if (erradas == 0) {
+			// 					let string = `${corretas} ${corretas > 1 ? "Usuários receberam" : "Usuário recebeu"}. Não houve nenhuma falha no envio de notificações`
+			// 					alert(string);
+			// 					console.log(string)
+			// 				} else {
+			// 					let string = `${corretas} ${corretas > 1 ? "Usuários receberam" : "Usuário recebeu"}, e ${erradas} ${erradas > 1 ? "Não conseguiram receber" : "não recebeu"}.`
+			// 					alert(string);
+			// 					console.log(string)
+			// 				}
+			// 			} else {
+			// 				console.log(responseJSON)
+			// 				alert("Erro ao enviar a notificação");
+			// 			}
+			// 			//then, reload screen
+			// 			window.location.reload();
+			// 		} else {
+			// 			console.log(response)
+			// 			alert("Erro ao enviar a notificação");
+			// 		}
+			// 	})
+			// 	.catch((error) => { });
 		}
+
 		function displayBairros() {
 			var listaBairrosSelecionados = document.getElementById("listaBairrosSelecionados");
 			listaBairrosSelecionados.innerHTML = "";
@@ -414,22 +543,43 @@
 			var optionsContainer = document.getElementById("optionsContainer");
 			request("../controller/bairros.php", "GET")
 				.then((response) => {
-					optionsContainer.innerHTML = response;
+					// Decodifica a resposta JSON
+					var data = JSON.parse(response);
+
+					// Processa o índice 0 - bairros
+					if (data[0]) {
+						var bairrosHTML = data[0].map(bairro => {
+							return `<div class="option" id="${bairro.id}">${bairro.nome}<input id="check${bairro.id}" type="checkbox" disabled></div>`;
+						}).join('');
+						optionsContainer.innerHTML = bairrosHTML;
+					}
+
+					// Processa o índice 1 - notificações
+					if (data[1]) {
+						var notificacoesHTML = data[1].map(notificacao => {
+							return `<option class="notification" id="${notificacao.idNotificacao}">${notificacao.descricao}</option>`;
+						}).join('');
+						tipoNotificacao.innerHTML = "<option id='naoSelecionado' selected hidden>Escolha um tipo de notificação</option>"
+						tipoNotificacao.innerHTML += notificacoesHTML;
+					}
+
+					// Chama a função automacao (se necessária)
 					// automacao();
 				})
 				.catch((error) => { });
 		}
 
 		function automacao() {
-			var foo = new Date();
-			console.log(`${foo.getHours()}:${foo.getMinutes()}`);
-			document.getElementById("previsao").value = `${foo.getHours()}:${foo.getMinutes()}`;
-			document.getElementById("linkNoticia").value = "https://www.uol.com.br";
-			document.getElementById("selectedOption").click();
-			document.getElementsByClassName("option")[8].click();
-			document.getElementsByClassName("option")[50].click();
-			document.getElementsByClassName("option")[99].click();
-			document.getElementsByTagName("body")[0].click();
+			document.getElementById("corpoMensagem").innerHTML = `🔧 Nesta quinta-feira (06), estamos fazendo uma manutenção em rede de água na Avenida 33, esquina da rua 40, no bairro Baroni.
+
+💧 O abastecimento de água ficará interrompido na região dos bairros Baroni e Exposição.
+
+⏰ Previsão de normalizar o abastecimento: por volta do 12h.
+
+📞 Aqueles que precisarem de caminhão-pipa podem solicitar pelos telefones: (17) 3321-5300 ou 0800 772 5300
+
+🚿 Orientamos que os registros sejam fechados para que a água, ao retornar, não tenha coloração ou terra.`
+
 		}
 
 		function request(route, method, data = null) {

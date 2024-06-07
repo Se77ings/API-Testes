@@ -35,4 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Erro ao enviar requisição.";
     }
 }
+if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    echo "opa, bao fio?";
+}
 ?>
