@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Solicitação</title>
 </head>
+
 <body>
     <h1>Consulta de Solicitação</h1>
     <form action="../controller/imagens.php" method="get">
@@ -12,5 +14,20 @@
         <input type="text" id="idSolicitacao" name="idSolicitacao" required>
         <button type="submit">Consultar</button>
     </form>
+    <h3>Teste:</h3>
+    <a href="https://www.icolibra.com.br/produto/tmppdf/ATM_0056_14910847-0_110624110620.pdf"
+        download="ATM_0056_14910847-0_110624110620.pdf">Download Fatura</a>
+    <button onclick="downloadFile()">Download Fatura</button>
+    <script>
+        function downloadFile() {
+            const link = document.createElement('a');
+            link.href = 'https://www.icolibra.com.br/produto/tmppdf/ATM_0056_14910847-0_110624110620.pdf';
+            link.download = 'ATM_0056_14910847-0_110624110620.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
+
 </html>

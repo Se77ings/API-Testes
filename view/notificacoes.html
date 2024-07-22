@@ -257,8 +257,8 @@
 				<div>
 					<p style="text-align: center; font-size: 15px; font-weight: bold; padding-bottom: 15px;">DETALHE DA
 						NOTIFICAÇÃO</p>
-					<div style="display: flex; flex-direction: row; justify-content: space-between">
-						<p style="margin-bottom: 15px; font-size: 20px; font-weight: bold;"><b
+					<div style="display: flex; flex-direction: row; justify-content: center">
+						<p style="margin-bottom: 15px; font-size: 20px; font-weight: bold"><b
 								id="notificationType">Manutenção no Bairro:</b></p>
 						<p id="dataHoje"></p>
 					</div>
@@ -398,24 +398,12 @@
 			spanNoticia.appendChild(anchor);
 		}
 
-
-
-		/*
-
-			var tipoNotificacao = document.getElementById("tipoNotificacao").value;
-			var notificaTodos = document.getElementById("notificaTodos").checked;
-			var divBairros = document.getElementById("divBairros");
-			var h3BairrosSelecionados = document.getElementById("h3BairrosSelecionados")
-			var listaBairrosSelecionados= document.getElementById("listaBairrosSelecionados")
-
-		*/
 		function sendForm() {
 			var tipoNotificacao = document.getElementById("tipoNotificacao").options[document.getElementById("tipoNotificacao").options.selectedIndex]
 			var corpoMensagem = document.getElementById("corpoMensagem").value.replace(/\n/g, '<br>') //  <-- quebra de linha
 			var notificaTodos = document.getElementById("notificaTodos").checked
 			var bairros = bairrosSelecionados.map((bairro) => bairro.id);
 
-			console.log(corpoMensagem)
 
 			if (tipoNotificacao.id == "naoSelecionado") {
 				document.getElementById("tipoNotificacao").style.borderColor = "red"
@@ -425,98 +413,86 @@
 					setTimeout(() => {
 						document.getElementById("tipoNotificacao").style.borderColor = "#ced4da"
 						document.getElementById("tipoNotificacao").style.borderWidth = "1px"
-						}, 1000)
-						}, 100)
-					return;
+					}, 1000)
+				}, 100)
+				return;
 			}
 
-				if(corpoMensagem == ""){
-					document.getElementById("corpoMensagem").style.borderColor= "red"
-					document.getElementById("corpoMensagem").style.borderWidth = "2px"
-					setTimeout(() => {
+			if (corpoMensagem == "") {
+				document.getElementById("corpoMensagem").style.borderColor = "red"
+				document.getElementById("corpoMensagem").style.borderWidth = "2px"
+				setTimeout(() => {
 					alert("Atenção!! Corpo do Texto vazio");
 					setTimeout(() => {
 						document.getElementById("corpoMensagem").style.borderColor = "#ced4da"
-						document.getElementById("corpoMensagem").style.borderWidth = "1px"
-						}, 1000)
-						}, 100)
-					return;
+						document.getElementById("corpoMensagem").style.borderWidth = "2px"
+					}, 1000)
+				}, 100)
+				return;
+			}
+
+			//Continuar a partir daqui:
+			if (bairros.length == 0 && !notificaTodos) {
+				document.getElementById("selectedOption").style.borderColor = "red";
+				document.getElementById("selectedOption").style.borderWidth = "2px"
+				setTimeout(() => {
+					alert("Selecione pelo menos um bairro");
+					setTimeout(() => {
+						document.getElementById("selectedOption").style.borderColor = "#ced4da"
+						document.getElementById("selectedOption").style.borderWidth = "1px"
+
+					}, 1000)
+				}, 100)
+				return;
+			}
+
+			request("../controller/notificacoes.php", "POST", {
+				tipoNotificacao: tipoNotificacao.id,
+				corpoMensagem: corpoMensagem,
+				notificaTodos: notificaTodos,
+				bairros: bairros,
+			}).then((response) => {
+				if (response) {
+					bairrosSelecionados = [];
+					//melhor reload
+					displayBairros();
+					if (response.indexOf("error") != -1) {
+						console.log(response)
+						alert("Não há nenhum usuário habilitado a receber notificaçoes para este(s) bairro(s)!");
+						window.location.reload();
+						return;
+					}
+					var responseJSON = JSON.parse(response);
+					console.log(responseJSON);
+					if (responseJSON.message) {
+						let corretas = responseJSON.corretas;
+						let erradas = responseJSON.erradas;
+						if (erradas == 0) {
+							let string = `${corretas} ${corretas > 1 ? "Usuários receberam" : "Usuário recebeu"}. Não houve nenhuma falha no envio de notificações`
+							alert(string);
+							console.log(string)
+						} else {
+							let string = `${corretas} ${corretas > 1 ? "Usuários receberam" : "Usuário recebeu"}, e ${erradas} ${erradas > 1 ? "Não conseguiram receber" : "não recebeu"}.`
+							alert(string);
+							console.log(string)
+						}
+					} else {
+						console.log(responseJSON)
+						alert("Erro ao enviar a notificação");
+					}
+					//then, reload screen
+					window.location.reload();
+				} else {
+					console.log(response)
+					alert("Erro ao enviar a notificação");
 				}
-
-				//Continuar a partir daqui:
-				console.log("nao existo")
-
-				
-			// var previsao = document.getElementById("previsao").value; //retirado
-			// var linkNoticia = document.getElementById("linkNoticia").value; //retirado
-			// var bairros = bairrosSelecionados.map((bairro) => bairro.id);
-			// btn.disabled = true;
-			// if (previsao == "") {
-			// 	alert("Previsão de retorno não pode ser vazia");
-			// 	return;
-			// }
-			// if (linkNoticia == "") {
-			// 	alert("Link da notícia não pode ser vazio");
-			// 	return;
-			// }
-			// if (bairros.length == 0) {
-			// 	alert("Selecione pelo menos um bairro");
-			// 	btn.disabled = false;
-			// 	return;
-			// }
-			// console.log(bairros);
-			// request("../controller/notificacoes.php", "POST", {
-			// 	previsao: previsao,
-			// 	// mensagem: descrico,
-			// 	linkNoticia: linkNoticia,
-			// 	bairros: bairros,
-			// })
-			// 	.then((response) => {
-			// 		if (response) {
-			// 			bairrosSelecionados = [];
-			// 			//melhor reload
-			// 			displayBairros();
-			// 			if (response.indexOf("error") != -1) {
-			// 				console.log(response)
-			// 				alert("Não há nenhum usuário cadastrado para este bairro!");
-			// 				window.location.reload();
-			// 				return;
-			// 			}
-			// 			//string(84) "{"titulo":"Titulo automação","mensagem":"Descrição automação","bairros":["2"]}"
-			// 			//{"error":"Nenhum usuário encontrado para o bairro informado!"}
-			// 			// alert(response);
-			// 			var responseJSON = JSON.parse(response);
-			// 			console.log(responseJSON);
-			// 			if (responseJSON.message) {
-			// 				let corretas = responseJSON.corretas;
-			// 				let erradas = responseJSON.erradas;
-			// 				if (erradas == 0) {
-			// 					let string = `${corretas} ${corretas > 1 ? "Usuários receberam" : "Usuário recebeu"}. Não houve nenhuma falha no envio de notificações`
-			// 					alert(string);
-			// 					console.log(string)
-			// 				} else {
-			// 					let string = `${corretas} ${corretas > 1 ? "Usuários receberam" : "Usuário recebeu"}, e ${erradas} ${erradas > 1 ? "Não conseguiram receber" : "não recebeu"}.`
-			// 					alert(string);
-			// 					console.log(string)
-			// 				}
-			// 			} else {
-			// 				console.log(responseJSON)
-			// 				alert("Erro ao enviar a notificação");
-			// 			}
-			// 			//then, reload screen
-			// 			window.location.reload();
-			// 		} else {
-			// 			console.log(response)
-			// 			alert("Erro ao enviar a notificação");
-			// 		}
-			// 	})
-			// 	.catch((error) => { });
+			})
+				.catch((error) => { });
 		}
 
 		function displayBairros() {
 			var listaBairrosSelecionados = document.getElementById("listaBairrosSelecionados");
 			listaBairrosSelecionados.innerHTML = "";
-
 			bairrosSelecionados.forEach((bairro) => {
 				var li = document.createElement("li");
 				li.textContent = bairro.bairro;
@@ -532,6 +508,7 @@
 					bairrosSelecionados = bairrosSelecionados.filter((b) => b.id !== li.id);
 					displayBairros();
 					exibirBairrosSelecionados();
+					
 				};
 
 				li.appendChild(lixeira);

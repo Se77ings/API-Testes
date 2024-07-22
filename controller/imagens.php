@@ -2,7 +2,6 @@
 if (isset($_GET['idSolicitacao'])) {
     $idSolicitacao = $_GET['idSolicitacao'];
     $apiUrl = "http://192.168.0.216:3000/solicitacoes/solicitacao/" . $idSolicitacao;
-
     // Inicializa o cURL
     $ch = curl_init();
 
@@ -25,33 +24,38 @@ if (isset($_GET['idSolicitacao'])) {
                 // Exibir dados da solicitação
                 $solicitacao = $data['solicitacoes'];
                 $imagens = $data['imagens'];
-                
+                $imagensArray = [];
+                $imagensArray = $imagens;
+
                 echo "<h1>Dados da Solicitação</h1>";
                 echo "<p>ID da Solicitação: " . htmlspecialchars($solicitacao['idsolicitacao']) . "</p>";
                 echo "<p>Observação: " . htmlspecialchars($solicitacao['observacao']) . "</p>";
                 echo "<p>Usuário: " . htmlspecialchars($solicitacao['nome']) . "</p>";
                 echo "<p>Serviço: " . htmlspecialchars($solicitacao['descricaoServico']) . "</p>";
                 echo "<p>Unidade: " . htmlspecialchars($solicitacao['idUnidade']) . "</p>";
-                echo "<p>Data de Abertura: " . htmlspecialchars($solicitacao['dataAbertura']) . "</p>";
+                echo "<p>Data de Abertura: " . $solicitacao['dataAbertura'] . "</p>";
 
                 // Exibir imagens
                 if (!empty($imagens)) {
-                    echo "<h2>Imagens</h2>";
-                    echo "Qtd. imagens: ". count($imagens);
+                    echo "<h2>Documentos Anexados:</h2>";
+                    echo "Qtd. imagens: " . count($imagens) ;
                     foreach ($imagens as $imagem) {
+                        $tamanho = $imagem['size'] / 1048576;
                         $fileContent = $imagem['file'];
-                        // Verifica se o conteúdo do arquivo é vazio
                         if (!empty($fileContent)) {
-                            // Decodifica o conteúdo Base64
-                            $decodedFileContent = base64_decode($fileContent);
-                            // Verifica se a decodificação foi bem-sucedida
-                            if ($decodedFileContent !== false) {
-                                // Determina o tipo de conteúdo
-                                $imageType = 'image/jpeg'; // ou 'image/png', dependendo do tipo de imagem
-                                // Exibe a imagem
-                                echo "<img src='data:" . $imageType . ";base64," . base64_encode($decodedFileContent) . "' alt='Imagem da Solicitação' style='max-width: 500px; display: block; margin-bottom: 10px;'/>";
+                            $imageType = $imagem['mimeType']; // Mime type correto
+                            $convertedString = base64_decode($fileContent);
+                            if ($imageType == "application/pdf") {
+                                echo "<embed src='" . $convertedString . "' type='application/pdf' width='100%' height='1000' style='display: block; margin-bottom: 10px;' />";
+                                echo "<p>Tamanho: " . number_format($tamanho, 2, '.', "") . " Mb</p>";
+
+                            } else if (str_starts_with($convertedString, "data")) {
+                                echo "<img src='" . $convertedString . "' alt='Imagem da Solicitação' style='max-width: 100%; display: block; margin-bottom: 10px;'/>";
+                                echo "<p>Tamanho: " . number_format($tamanho, 2, '.', "") . " Mb</p>";
                             } else {
-                                echo "Erro ao decodificar o conteúdo da imagem.";
+                                echo "<img src='data:" . $imageType . ";base64," . $convertedString . "' alt='Imagem da Solicitação' style='max-width: 100%; display: block; margin-bottom: 10px;'/>";
+                                echo "<p>Tamanho: " . number_format($tamanho, 2, '.', "") . " Mb</p>";
+
                             }
                         } else {
                             echo "O conteúdo do arquivo está vazio.";

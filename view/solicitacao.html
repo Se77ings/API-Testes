@@ -1,67 +1,183 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enviar FormData via JSON</title>
-  </head>
-  <body>
-    <form id="formulario" enctype="multipart/form-data">
-      <label for="observacao">Observação:</label>
-      <input type="text" id="observacao" name="observacao" /><br /><br />
 
-      <label for="idUsuario">ID do Usuário:</label>
-      <input type="text" id="idUsuario" name="idUsuario" /><br /><br />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enviar FormData via JSON</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
 
-      <label for="idServico">ID do Serviço:</label>
-      <input type="text" id="idServico" name="idServico" /><br /><br />
+    #formulario {
+      border: solid 1px grey;
+      max-width: 50%;
+      min-width: 40%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
 
-      <label for="idUnidade">ID da Unidade:</label>
-      <input type="text" id="idUnidade" name="idUnidade" /><br /><br />
 
-      <label for="imagem">Imagem:</label>
-      <input type="file" id="imagem" name="imagem[]" multiple /><br /><br />
+    }
 
-      <button type="button" onclick="enviarDados()">Enviar</button>
-    </form>
+    .inputText {
+      border-radius: 50;
+      height: 2em;
+      font-size: 1em;
+      border-radius: 5px 5px 5px 5px;
+      border-width: 1px;
+      margin-bottom: 15px;
+    }
 
-    <script>
-      function enviarDados() {
-        var formData = new FormData();
-        formData.append(
-          "observacao",
-          document.getElementById("observacao").value
-        );
-        formData.append(
-          "idUsuario",
-          document.getElementById("idUsuario").value
-        );
-        formData.append(
-          "idServico",
-          document.getElementById("idServico").value
-        );
-        formData.append(
-          "idUnidade",
-          document.getElementById("idUnidade").value
-        );
-        var imagens = document.getElementById("imagem").files;
+    button.sendForm {
+      height: 2em;
+      width: 50%;
+      margin: auto;
+      font-size: 1.3em;
+    }
 
-        
-        for (var i = 0; i < imagens.length; i++) {
-          formData.append("imagem", imagens[i]);
-        }
+    .labelForm {
+      font-size: 1.1em;
+    }
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://192.168.0.216:3000/solicitacoes/imagem");
-        xhr.onload = function () {
-          if (xhr.status === 201) {
-            console.log("Solicitação com imagens cadastrada com sucesso!");
-          } else {
-            console.error("Erro ao cadastrar solicitação:", xhr.responseText);
-          }
-        };
-        xhr.send(formData);
+    #solicitacoesAbertas {
+      border: solid 1px red;
+    }
+    .trow:hover{
+      background-color: gainsboro;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+
+<body onload="loadData()">
+  <form id="formulario" enctype="multipart/form-data">
+    <h2>Formulário de nova solicitação</h2>
+    <label class="labelForm" for="observacao">Observação:</label>
+    <input class="inputText" type="text" id="observacao" name="observacao" />
+
+    <label class="labelForm" for="idUsuario">ID do Usuário:</label>
+    <input class="inputText" type="text" id="idUsuario" name="idUsuario" />
+
+    <label class="labelForm" for="idServico">ID do Serviço:</label>
+    <input class="inputText" type="text" id="idServico" name="idServico" />
+
+    <label class="labelForm" for="idUnidade">ID da Unidade:</label>
+    <input class="inputText" type="text" id="idUnidade" name="idUnidade" />
+
+    <label for="imagem">Imagem:</label>
+    <input type="file" id="imagem" name="imagem[]" multiple />
+
+    <button class="sendForm" type="button" onclick="enviarDados()">Cadastrar solicitação</button>
+  </form>
+  <div id="solicitacoesAbertas">
+    <h2>Solicitações abertas:</h2>
+    
+    <table>
+      <thead>
+          <th>idsolicitacao</th>
+          <th>observacao</th>
+          <th>nome</th>
+          <th>descricaoServico</th>
+          <th>idUnidade</th>
+          <th>dataAbertura</th>
+      </thead>
+      <tbody id="itens">
+
+      </tbody>
+    </table>
+
+  </div>
+  <script>
+async function loadData() {
+  var tbodyItens = document.getElementById("itens");
+  var itens = await request("http://192.168.0.216:3000/solicitacoes", "GET");
+  var itensArray = JSON.parse(itens);
+  console.log(itensArray);
+
+  // Limpar o tbody antes de adicionar novos itens
+  tbodyItens.innerHTML = "";
+
+  // Inserir cada elemento do array como uma linha na tabela
+  itensArray.forEach(element => {
+    tbodyItens.innerHTML += `
+    
+      <tr class="trow" onclick="window.location.href='http://192.168.0.216/saaeb-app/API-Testes/controller/imagens.php?idSolicitacao=${element.idsolicitacao}'">
+        <td>${element.idsolicitacao}</td>
+        <td>${element.observacao}</td>
+        <td>${element.nome}</td>
+        <td>${element.descricaoServico}</td>
+        <td>${element.idUnidade}</td>
+        <td>${element.dataAbertura}</td>
+      </tr> 
+
+    `;
+  });
+}
+
+		function request(route, method, data = null) {
+			return new Promise((resolve, reject) => {
+				let xhr = new XMLHttpRequest();
+				xhr.open(method, route, true);
+
+				// Configura os cabeçalhos CORS
+				xhr.setRequestHeader("Access-Control-Allow-Origin", "*"); // Define a origem permitida como *
+				xhr.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4) {
+						if (xhr.status == 200) {
+							resolve(xhr.responseText);
+						} else {
+							reject(xhr.status);
+						}
+					}
+				};
+				xhr.send(JSON.stringify(data));
+			});
+		}
+    function enviarDados() {
+      var formData = new FormData();
+      formData.append(
+        "observacao",
+        document.getElementById("observacao").value
+      );
+      formData.append(
+        "idUsuario",
+        document.getElementById("idUsuario").value
+      );
+      formData.append(
+        "idServico",
+        document.getElementById("idServico").value
+      );
+      formData.append(
+        "idUnidade",
+        document.getElementById("idUnidade").value
+      );
+      var imagens = document.getElementById("imagem").files;
+
+
+      for (var i = 0; i < imagens.length; i++) {
+        formData.append("imagem", imagens[i]);
       }
-    </script>
-  </body>
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://192.168.0.216:3000/solicitacoes/imagem");
+      xhr.onload = function () {
+        if (xhr.status === 201) {
+          console.log("Solicitação com imagens cadastrada com sucesso!");
+        } else {
+          console.error("Erro ao cadastrar solicitação:", xhr.responseText);
+        }
+      };
+      xhr.send(formData);
+    }
+  </script>
+</body>
+
 </html>
